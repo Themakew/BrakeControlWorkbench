@@ -29,7 +29,7 @@ def account():
     return "You are logged in"
 
 
-@app.route("/")
+@app.route("/login")
 def login():
     email = request.form.get("email")
     password = request.form.get("password")
