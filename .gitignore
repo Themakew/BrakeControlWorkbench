@@ -3,3 +3,7 @@ pi2/
 
 ### OS X Directory ###
 .DS_Store
+
+### Configuration Archives ###
+config.py
+*.pyc
