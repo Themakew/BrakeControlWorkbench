@@ -23,23 +23,33 @@ def home():
     return render_template("home.html")
 
 
-@app.route("/account")
+@app.route("/home")
 @login_required
-def account():
+def control_painel():
     return "You are logged in"
 
 
-@app.route("/login")
+@app.route("/", methods=["POST"])
 def login():
-    email = request.form.get("email")
-    password = request.form.get("password")
-    user_password = DB.get_user(email)
+    if request.method == "POST":
+        email = request.form.get("email")
+        print email
+        password = request.form.get("password")
+        user_password = DB.get_user(email)
 
-    if user_password and user_password == password:
-        user = User(email)
-        login_user(user)
-        return redirect(url_for("account")) #account url just for test, change after to home, for example!
-    return home()
+        if user_password and user_password == password:
+            user = User(email)
+            login_user(user)
+            return redirect(url_for("home"))
+        return control_painel()
+
+
+@login_manager.user_loader
+def load_user(user_id):
+   user_password = DB.get_user(user_id)
+   if user_password:
+      return User(user_id)
+
 
 if __name__ == '__main__':
     app.run(port=5000, debug=True)
