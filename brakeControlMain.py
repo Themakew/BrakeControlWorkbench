@@ -19,8 +19,8 @@ login_manager = LoginManager(app)
 
 
 @app.route("/")
-def home():
-    return render_template("home.html")
+def index():
+    return render_template("index.html")
 
 
 @app.route("/home")
@@ -32,16 +32,22 @@ def control_painel():
 @app.route("/", methods=["POST"])
 def login():
     if request.method == "POST":
-        email = request.form.get("email")
+        email = request.form["email"]
         print email
-        password = request.form.get("password")
+        password = request.form["password"]
         user_password = DB.get_user(email)
 
         if user_password and user_password == password:
             user = User(email)
             login_user(user)
-            return redirect(url_for("home"))
+            return redirect(url_for("control_painel"))
         return control_painel()
+
+
+@app.route("/home")
+def logout():
+   logout_user()
+   return redirect(url_for("index"))
 
 
 @login_manager.user_loader
