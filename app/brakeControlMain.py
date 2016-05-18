@@ -26,7 +26,7 @@ def index():
 @app.route("/home")
 @login_required
 def control_painel():
-    return "You are logged in"
+    return render_template("home.html")
 
 
 @app.route("/", methods=["POST"])
@@ -40,8 +40,8 @@ def login():
         if user_password and user_password == password:
             user = User(email)
             login_user(user)
-            return redirect(url_for("control_painel"))
-        return control_painel()
+            return control_painel() and redirect(url_for("control_painel"))
+        return "User not logged!"
 
 
 @app.route("/home")
