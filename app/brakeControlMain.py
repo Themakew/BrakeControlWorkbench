@@ -44,10 +44,12 @@ def login():
         return "User not logged!"
 
 
-@app.route("/home")
+@app.route("/home", methods=["POST"])
 def logout():
-    logout_user()
-    return render_template("index.html")
+    if request.method == "POST":
+        logout_user()
+        print "deslogado com sucesso"
+        return render_template("index.html")
 
 
 @login_manager.user_loader
