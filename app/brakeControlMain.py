@@ -47,8 +47,7 @@ def login():
 @app.route("/home")
 def logout():
    logout_user()
-   return redirect(url_for("index"))
-
+   return render_template("index.html")
 
 @login_manager.user_loader
 def load_user(user_id):
