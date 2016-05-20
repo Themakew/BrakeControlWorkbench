@@ -6,6 +6,9 @@ python:
 install:
   - pip install -r requirements.txt
 
+# run application
+  - python app/brakeControlMain.py
+
 # command to run tests
 script:
   - python -m unittest discover app/tests/

@@ -9,7 +9,7 @@ from flask.ext.login import LoginManager
 from flask.ext.login import login_required
 from flask.ext.login import login_user
 
-from mockdbhelper import MockDBHelper as DBHelpers
+from mockdbhelper import MockDBHelper as DBHelper
 
 DB = DBHelper()
 
@@ -35,7 +35,6 @@ def control_painel():
 def login():
     if request.method == "POST":
         email = request.form["email"]
-        print email
         password = request.form["password"]
         user_password = DB.get_user(email)
 
@@ -50,7 +49,6 @@ def login():
 def logout():
     if request.method == "POST":
         logout_user()
-        print "deslogado com sucesso"
         return render_template("index.html")
 
 
