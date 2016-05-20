@@ -46,14 +46,15 @@ def login():
 
 @app.route("/home")
 def logout():
-   logout_user()
-   return render_template("index.html")
+    logout_user()
+    return render_template("index.html")
+
 
 @login_manager.user_loader
 def load_user(user_id):
-   user_password = DB.get_user(user_id)
-   if user_password:
-      return User(user_id)
+    user_password = DB.get_user(user_id)
+    if user_password:
+        return User(user_id)
 
 
 if __name__ == '__main__':
