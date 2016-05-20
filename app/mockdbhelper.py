@@ -1,4 +1,4 @@
-MOCK_USERS = {'admin':'admin'}
+MOCK_USERS = {'admin': 'admin'}
 
 
 class MockDBHelper:
