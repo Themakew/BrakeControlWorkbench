@@ -1,4 +1,4 @@
-from user import User
+from models import User
 
 from flask import Flask
 from flask import redirect
@@ -8,6 +8,7 @@ from flask import url_for
 from flask.ext.login import LoginManager
 from flask.ext.login import login_required
 from flask.ext.login import login_user
+from flask.ext.login import logout_user
 
 from mockdbhelper import MockDBHelper as DBHelper
 
@@ -49,7 +50,7 @@ def login():
 def logout():
     if request.method == "POST":
         logout_user()
-        return render_template("index.html")
+        return index() and redirect(url_for("index"))
 
 
 @login_manager.user_loader
