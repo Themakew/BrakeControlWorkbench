@@ -46,11 +46,10 @@ def login():
         return "User not logged!"
 
 
-@app.route("/home", methods=["POST"])
+@app.route("/logout")
 def logout():
-    if request.method == "POST":
-        logout_user()
-        return index() and redirect(url_for("index"))
+    logout_user()
+    return index() and redirect(url_for("index"))
 
 
 @login_manager.user_loader

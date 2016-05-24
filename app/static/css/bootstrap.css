@@ -4,6 +4,57 @@
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  */
 /*! normalize.css v3.0.3 | MIT License | github.com/necolas/normalize.css */
+.dropbtn {
+    background-color: #5cb85c;
+    color: white;
+    padding: 6px 12px;;
+    font-size: 14px;
+    border: none;
+    cursor: pointer;
+    border-color: #4cae4c;
+    text-align: center;
+    line-height: 1.42857143;
+    vertical-align: middle;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #3e8e41;
+    min-width: 100px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+}
+
+.dropdown-content a {
+    color: white;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content a:hover {
+    background-color: #4cae4c;
+    border-radius: 4px;
+    color: white;
+    text-decoration: none;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+    border-radius: 4px;
+}
+
+.dropdown:hover .dropbtn {
+    background-color: #3e8e41;
+}
+
 html {
   font-family: sans-serif;
   -webkit-text-size-adjust: 100%;
