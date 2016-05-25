@@ -3,29 +3,26 @@ import serial
 
 class ArduinoConnection:
 
-    variable_one = " "
-    variable_two = " "
-    variable_three = " "
-    variable_four = " "
-    variable_five = " "
-    variable_six = " "
+    def __init__(self):
+        self.arduino_port = '/dev/cu.wchusbserial1420'
+        self.arduino_feedback = serial.Serial(self.arduino_port, 9600, timeout=10)
 
     def read_string_from_arduino(self):
-        # Specific port in computer tha the arduino is connected
-        arduino_port = '/dev/cu.wchusbserial1420'
+        while True:
+            arduino_feedback_list = self.arduino_feedback.readline().split()
+            self.convert_list_to_dictionary(arduino_feedback_list)
 
-        # String from arduino
-        arduino_feedback = serial.Serial(port, 9600, timeout = 10)
+            # return arduino_feedback_dictionary
 
-        while True
-            arduino_feedback_list = arduinoFeedback.readline().split()
-            variable_one = arduino_feedback_list[0]
-            variable_two = arduino_feedback_list[1]
-            variable_three = arduino_feedback_list[2]
-            variable_four = arduino_feedback_list[3]
-            variable_five = arduino_feedback_list[4]
-            variable_six = arduino_feedback_list[5]
-
+    def convert_list_to_dictionary(self, arduino_feedback_list):
+        arduino_feedback_dictionary = {"var_one": float(arduino_feedback_list[0]),
+                                       "var_two": float(arduino_feedback_list[1]),
+                                       "var_three": float(arduino_feedback_list[2]),
+                                       "var_four": float(arduino_feedback_list[3]),
+                                       "var_five": float(arduino_feedback_list[4]),
+                                       "var_six": float(arduino_feedback_list[5])}
+        print arduino_feedback_dictionary
+        # return arduino_feedback_dictionary
 
 if __name__ == '__main__':
     instance = ArduinoConnection()
