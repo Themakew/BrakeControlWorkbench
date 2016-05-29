@@ -6,10 +6,10 @@ from flask.ext.login import login_required
 from flask.ext.login import login_user
 from flask.ext.login import logout_user
 
-from app import app
-from app import DB
+from application import app
+from application import DB
 from models import User
-from app import login_manager
+from application import login_manager
 
 
 @login_manager.user_loader

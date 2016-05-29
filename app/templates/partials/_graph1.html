@@ -1,0 +1,110 @@
+<script type="text/javascript">
+    window.onload = function () {
+
+        var vel_time_dps = []; // Datapoints
+        var temp_time_dps = []; // Datapoints
+        var vel_temp_dps = []; // Datapoints
+
+        var chart1 = new CanvasJS.Chart("velocity_time", {
+            title: {
+                text: "Velocidade X Tempo"
+            },
+            data: [{
+                type: "spline",
+                dataPoints: vel_time_dps
+            }]
+        });
+
+        var chart2 = new CanvasJS.Chart("temperature_time", {
+            title: {
+                text: "Temperatura X Tempo"
+            },
+            data: [{
+                type: "spline",
+                dataPoints: temp_time_dps
+            }]
+        });
+
+        var chart3 = new CanvasJS.Chart("velocity_temperature", {
+            title: {
+                text: "Velocidade X Temperatura"
+            },
+            data: [{
+                type: "spline",
+                dataPoints: vel_temp_dps
+            }]
+        });
+
+        var xVal = 0;
+        var yVal = 100;
+        var updateInterval = 100;
+        var dataLength = 200; // num of datapoints visible at any point
+
+        var updateChart1 = function (count) {
+            count = count || 1;
+            // count is number of times loop runs to generate random datapoints
+
+            for (var j = 0; j < count; j++) {
+                yVal = yVal + Math.round(5 + Math.random() *(-5-5));
+                vel_time_dps.push({
+                    x: xVal,
+                    y: yVal
+                });
+                xVal++;
+            };
+            if (vel_time_dps.length > dataLength)
+            {
+                vel_time_dps.shift();
+            }
+            chart1.render();
+        };
+
+        var updateChart2 = function (count) {
+            count = count || 1;
+            // count is number of times loop runs to generate random datapoints
+
+            for (var j = 0; j < count; j++) {
+                yVal = yVal + Math.round(5 + Math.random() *(-5-5));
+                temp_time_dps.push({
+                    x: xVal,
+                    y: yVal
+                });
+                xVal++;
+            };
+            if (temp_time_dps.length > dataLength)
+            {
+                temp_time_dps.shift();
+            }
+            chart2.render();
+        };
+
+        var updateChart3 = function (count) {
+            count = count || 1;
+            // count is number of times loop runs to generate random datapoints
+
+            for (var j = 0; j < count; j++) {
+                yVal = yVal + Math.round(5 + Math.random() *(-5-5));
+                vel_temp_dps.push({
+                    x: xVal,
+                    y: yVal
+                });
+                xVal++;
+            };
+            if (vel_temp_dps.length > dataLength)
+            {
+                vel_temp_dps.shift();
+            }
+            chart3.render();
+        };
+
+        // generates first set of dp
+        updateChart1(dataLength);
+        updateChart2(dataLength);
+        updateChart3(dataLength);
+
+        // update chart after specified time
+        setInterval(function(){ updateChart1() }, updateInterval);
+        setInterval(function(){ updateChart2() }, updateInterval);
+        setInterval(function(){ updateChart3() }, updateInterval);
+    }
+</script>
