@@ -55,13 +55,52 @@
     background-color: #3e8e41;
 }
 
+#vcontainer-item {
+   display: table-cell;
+}
+
+#button-control {
+  margin-top: 20px;
+  margin-left: 8%;
+}
+
+#button-control-one {
+  margin-left: 7%;
+}
+
+#center-control {
+  margin-left: 7%;
+  margin-top: 6%;
+}
+
+.format-grafic-one {
+  height: 240px;
+  width: 150%;
+  margin-top: 5px
+}
+
+.format-grafic-two {
+  height: 240px;
+  width: 110%;
+}
+
+.format-grafic-three {
+  height: 240px;
+  width: 113%;
+  margin-left: 5px;
+}
+
+.footerr {
+  margin-left: 45%
+}
+
 html {
   font-family: sans-serif;
   -webkit-text-size-adjust: 100%;
       -ms-text-size-adjust: 100%;
 }
 body {
-  margin: 0;
+  margin: 0
 }
 article,
 aside,
@@ -2683,6 +2722,7 @@ input[type="search"] {
 }
 .form-group {
   margin-bottom: 15px;
+  align-content: center;
 }
 .radio,
 .checkbox {
@@ -5450,7 +5490,8 @@ button.list-group-item-warning .list-group-item-heading {
 a.list-group-item-warning:hover,
 button.list-group-item-warning:hover,
 a.list-group-item-warning:focus,
-button.list-group-item-warning:focus {
+button
+-group-item-warning:focus {
   color: #8a6d3b;
   background-color: #faf2cc;
 }
