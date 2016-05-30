@@ -1,5 +1,4 @@
 from application import app
-import models
 import views
 
 
