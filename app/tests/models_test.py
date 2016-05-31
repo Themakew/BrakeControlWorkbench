@@ -1,8 +1,5 @@
 import unittest
-import os
-import sys
-sys.path.insert(0, os.path.abspath(__file__ + "/../.."))
-from models import User
+from app.models import User
 
 
 class TestModels(unittest.TestCase):

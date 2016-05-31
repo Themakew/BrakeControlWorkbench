@@ -1,3 +1,4 @@
+from celery import Celery
 from flask import Flask
 from flask.ext.login import LoginManager
 from mockdbhelper import MockDBHelper as DBHelper
@@ -5,6 +6,11 @@ from mockdbhelper import MockDBHelper as DBHelper
 app = Flask(__name__)
 app.secret_key = "YqO29YjPwEWcV7w5UjzoamGL7+9UazD5MWcfM6ZgN/2lvQJtcjZHH2p+wSfZt\
 7oNlW+7WQn80rvvS9C1CUWffFIHXz04qKSLkD9o"
+app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379/0'
+app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379/0'
+
+celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
+celery.conf.update(app.config)
 
 login_manager = LoginManager(app)
 
