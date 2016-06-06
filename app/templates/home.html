@@ -61,7 +61,7 @@
             <div class="col-md-3" id="center-control">
             </div>
             <div class="col-md-4">
-                <div id="velocity_temperature" class="format-grafic-three">
+                <div id="temperature_grip" class="format-grafic-three">
                 </div>
             </div>
         </div>
@@ -70,4 +70,6 @@
 
 {% endblock %}
 
-
+{% block extra_end_scripts %}
+    <script src="../static/js/jquery-2.2.4.min.js"></script>
+{% endblock %}
