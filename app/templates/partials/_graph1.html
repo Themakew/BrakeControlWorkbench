@@ -36,13 +36,13 @@
             // count is number of times loop runs to generate random datapoints
 
             for (var j = 0; j < count; j++) {
-                tempDisc = tempDisc + Math.round(5 + Math.random() *(-5-5));
-                tempGrip = tempGrip + Math.round(5 + Math.random() *(-5-5));
-                velDisc = velDisc + Math.round(5 + Math.random() *(-5-5));
+                //tempDisc = tempDisc + Math.round(5 + Math.random() *(-5-5));
+                //tempGrip = tempGrip + Math.round(5 + Math.random() *(-5-5));
+                //velDisc = velDisc + Math.round(5 + Math.random() *(-5-5));
                 // Don't need a chart
-                tempEnv = tempEnv + Math.round(5 + Math.random() *(-5-5));
-                pressure = pressure + Math.round(5 + Math.random() *(-5-5));
-                friction = friction + Math.round(5 + Math.random() *(-5-5));
+                //tempEnv = tempEnv + Math.round(5 + Math.random() *(-5-5));
+                //pressure = pressure + Math.round(5 + Math.random() *(-5-5));
+                //friction = friction + Math.round(5 + Math.random() *(-5-5));
 
                 $("#temp_disc").html(tempDisc);
                 $("#temp_grip").html(tempGrip);
@@ -88,5 +88,38 @@
 
         // update chart after specified time
         setInterval(function(){ updateChart() }, updateInterval);
+
+        function start_task() {
+            $.ajax({
+                type: 'POST',
+                url: '/update_control_painel',
+                success: function(data, status, request) {
+                    status_url = request.getResponseHeader('Location');
+                    update_progress(status_url)
+                },
+                error: function() {
+                    alert('Unexpected error');
+                }
+            });
+        }
+
+        function update_progress(status_url) {
+            $.getJSON(status_url, function(data) {
+                if (data['state'] == 'PROGRESS') {
+                    tempDisc = data['dsc_temp'];
+                    tempGrip = data['pin_temp'];
+                    velDisc = data['speed'];
+                    tempEnv = data['env_temp'];
+                    pressure = data['pressure'];
+                    friction = data['friction'];
+                    $("#teste").html(friction + '<br>' + tempDisc + '<br>' + velDisc);
+                }
+                setTimeout( function() {
+                    update_progress(status_url);
+                }, 500);
+            });
+        }
+
+        $("#button-control-one").click(start_task);
     }
 </script>

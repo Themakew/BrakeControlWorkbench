@@ -4,3 +4,5 @@
 ### Configuration Archives ###
 config.py
 *.pyc
+
+*.rdb

@@ -55,9 +55,60 @@ def logout():
 
 @app.route("/update_control_painel", methods=["POST"])
 def update_control_painel():
-    task = read_string_from_arduino_continually.apply_async()
+    #task = read_string_from_arduino_continually.apply_async()
+    task = read_string_mock.delay()
     return jsonify({}), 202, {'Location': url_for('taskstatus', task_id=task.id)}
 
+@app.route("/inittask/<task_id>")
+def taskstatus(task_id):
+    task = read_string_mock.AsyncResult(task_id)
+    if task.state == 'PENDING':
+        response = {
+            'state': task.state,
+            'env_temp': 0,
+            'pin_temp': 0,
+            'dsc_temp': 0,
+            'speed': 0,
+            'pressure': 0,
+            'friction': 0
+        }
+    elif task.state != 'FAILURE':
+        response = {
+            'state': task.state,
+            'env_temp': task.info.get('env_temp'),
+            'pin_temp': task.info.get('pin_temp'),
+            'dsc_temp': task.info.get('dsc_temp'),
+            'speed': task.info.get('speed'),
+            'pressure': task.info.get('pressure'),
+            'friction': task.info.get('friction')
+        }
+    else:
+        response = {'state': 'ERROR....'}
+
+    return jsonify(response)
+
+import random
+@celery.task(bind=True)
+def read_string_mock(self):
+    for i in range(120):
+        dtemp = random.randint(30, 80)
+        ptemp = random.randint(30, 70)
+        etemp = random.randint(20, 35)
+        speed = random.randint(40, 60)
+        press = random.randint(0, 100)
+        frict = random.randint(0, 60)
+
+        self.update_state(state='PROGRESS',
+                    meta={'env_temp': etemp,
+                          'pin_temp': ptemp,
+                          'dsc_temp': dtemp,
+                          'speed': speed,
+                          'pressure': press,
+                          'friction': frict
+                          })
+        time.sleep(0.5)
+
+    return {'result': 51}
 
 @celery.task(bind=True)
 def read_string_from_arduino_continually(self):

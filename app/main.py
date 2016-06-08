@@ -1,4 +1,5 @@
 from application import app
+from application import celery
 import views
 
 
