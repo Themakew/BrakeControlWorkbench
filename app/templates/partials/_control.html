@@ -1,16 +1,16 @@
 <div>
     <br>
-    <form role="init_test">
+    <form role="init_test" action="/start_test" method="post">
         <div class="form-group" id="vcontainer-item">
             <label>Escolha a velocidade:</label>
-            <select class="form-control" id="velocity">
+            <select class="form-control" id="velocity" name="velocity">
                 <option>40 Km/h</option>
                 <option>60 Km/h</option>
                 <option>80 Km/h</option>
             </select>
         </div>
-        <button type="submit" class="btn btn-default" id="button-control">Iniciar Teste</button>
+        <button type="submit" class="btn btn-default" id="button-control" value="Start Test">Iniciar Teste</button>
     </form>
     <br>
-    <button class="btn btn-warning" id="button-control-one">Acionar freio</button>
+    <button class="btn btn-warning" id="button-control-one" action="/stop_test" value="Stop Test">Acionar freio</button>
 </div>

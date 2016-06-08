@@ -59,6 +59,21 @@ def update_control_painel():
     return jsonify({}), 202, {'Location': url_for('taskstatus', task_id=task.id)}
 
 
+@app.route("/start_test", methods=['POST'])
+@login_required
+def start_test():
+    velocity = request.form['velocity']
+    print("The velocity is '" + velocity + "'")
+    return redirect('/home')
+
+
+@app.route("/stop_test")
+@login_required
+def stop_test():
+    print "stopped test"
+    return redirect('/home')
+
+
 @celery.task(bind=True)
 def read_string_from_arduino_continually(self):
     self.environment_tempeture = 0.0
