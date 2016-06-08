@@ -12,7 +12,7 @@ Clone the repository:
 
 Enter in the project directory:
 ```bash
-  $ cd BrakeControlWorkbench
+  $ cd BrakeControlWorkbench/app
 ```
 
 Install all the project dependencies:
@@ -22,7 +22,17 @@ Install all the project dependencies:
 
 
 # Running the development server
+Open three terminals into /app directory.
 
+1) Open redis-server
 ```bash
-  $ python BrakeControlWorkbench.py
+  $ redis-server
+```
+2) Open celery
+```bash
+  $ celery worker -A main.celery -l info
+```
+3) Open python
+```bash
+  $ python main.py
 ```
