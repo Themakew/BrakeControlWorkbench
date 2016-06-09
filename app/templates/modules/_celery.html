@@ -1,0 +1,31 @@
+function start_task() {
+        $.ajax({
+            type: 'POST',
+            url: '/update_control_painel',
+            success: function(data, status, request) {
+                status_url = request.getResponseHeader('Location');
+                update_progress(status_url)
+            },
+            error: function() {
+                alert('Unexpected error');
+            }
+        });
+    }
+
+    function update_progress(status_url) {
+        $.getJSON(status_url, function(data) {
+            if (data['state'] == 'PROGRESS') {
+                tempDisc = data['dsc_temp'];
+                tempGrip = data['pin_temp'];
+                velDisc = data['speed'];
+                tempEnv = data['env_temp'];
+                pressure = data['pressure'];
+                friction = data['friction'];
+            }
+            setTimeout( function() {
+                update_progress(status_url);
+            }, 500);
+        });
+    }
+
+    $("#button-control").click(start_task);

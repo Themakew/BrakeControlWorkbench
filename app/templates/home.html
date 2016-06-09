@@ -5,7 +5,7 @@
 <script type="text/javascript" src="../static/canvasjs-1/canvasjs.min.js">
 </script>
 
-{% include "partials/_graph1.html" %}
+{% include "modules/_base.html" %}
 
 {% endblock %}
 
@@ -31,10 +31,10 @@
     <div class="container">
         <div class="row">
             <div class="col-md-4">
-                {% include "partials/_jwplayer.html" %}
+                {% include "modules/_jwplayer.html" %}
             </div>
             <div class="col-md-3" id="center-control">
-                {% include "partials/_control.html" %}
+                {% include "modules/_control.html" %}
             </div>
             <div class="col-md-3">
                 <div id="velocity_time" class="format-grafic-one">
@@ -44,7 +44,7 @@
         <br>
         <div class="row">
             <div class="col-md-4">
-                {% include "partials/_table.html" %}
+                {% include "modules/_table.html" %}
             </div>
             <div class="col-md-3" id="center-control">
                 {# Nothing in this column #}

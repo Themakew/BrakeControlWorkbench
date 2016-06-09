@@ -55,9 +55,10 @@ def logout():
 
 @app.route("/update_control_painel", methods=["POST"])
 def update_control_painel():
-    #task = read_string_from_arduino_continually.apply_async()
+    # task = read_string_from_arduino_continually.apply_async()
     task = read_string_mock.delay()
     return jsonify({}), 202, {'Location': url_for('taskstatus', task_id=task.id)}
+
 
 @app.route("/inittask/<task_id>")
 def taskstatus(task_id):
@@ -87,6 +88,7 @@ def taskstatus(task_id):
 
     return jsonify(response)
 
+# simple mock
 import random
 @celery.task(bind=True)
 def read_string_mock(self):
@@ -99,22 +101,23 @@ def read_string_mock(self):
         frict = random.randint(0, 60)
 
         self.update_state(state='PROGRESS',
-                    meta={'env_temp': etemp,
-                          'pin_temp': ptemp,
-                          'dsc_temp': dtemp,
-                          'speed': speed,
-                          'pressure': press,
-                          'friction': frict
-                          })
+                          meta={'env_temp': etemp,
+                                'pin_temp': ptemp,
+                                'dsc_temp': dtemp,
+                                'speed': speed,
+                                'pressure': press,
+                                'friction': frict
+                                })
         time.sleep(0.5)
 
     return {'result': 51}
+
 
 @app.route("/start_test", methods=['POST'])
 @login_required
 def start_test():
     velocity = request.form['velocity']
-    print("The velocity is '" + velocity + "'")
+    # print("The velocity is '" + velocity + "'")
     return redirect('/home')
 
 
