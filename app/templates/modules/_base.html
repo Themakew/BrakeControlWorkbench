@@ -22,12 +22,12 @@
         var chart3 = createChart("temperature_grip", "Temperatura(Pinça) X Tempo", "spline", temp_grip_dps);
 
         var xVal = 0;
-        var tempDisc = 10;
-        var tempGrip = 10;
+        var tempDisc = 0;
+        var tempGrip = 0;
         var velDisc = 0;
-        var tempEnv = 30;
+        var tempEnv = 0;
         var pressure = 0;
-        var friction = 4;
+        var friction = 0;
         var updateInterval = 100;
         var dataLength = 500; // num of datapoints visible at any point
 
@@ -89,6 +89,36 @@
         // update chart after specified time
         setInterval(function(){ updateChart() }, updateInterval);
 
-        {% include "modules/_celery.html" %}
+        function start_task() {
+                $.ajax({
+                    type: 'POST',
+                    url: '/update_control_painel',
+                    success: function(data, status, request) {
+                        status_url = request.getResponseHeader('Location');
+                        update_progress(status_url)
+                    },
+                    error: function() {
+                        alert('Unexpected error');
+                    }
+                });
+            }
+
+            function update_progress(status_url) {
+                $.getJSON(status_url, function(data) {
+                    if (data['state'] == 'PROGRESS') {
+                        tempDisc = data['dsc_temp'];
+                        tempGrip = data['pin_temp'];
+                        velDisc = data['speed'];
+                        tempEnv = data['env_temp'];
+                        pressure = data['pressure'];
+                        friction = data['friction'];
+                    }
+                    setTimeout( function() {
+                        update_progress(status_url);
+                    }, 500);
+                });
+            }
+
+            $("#button-control").click(start_task);
     }
 </script>

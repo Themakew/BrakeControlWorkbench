@@ -55,14 +55,13 @@ def logout():
 
 @app.route("/update_control_painel", methods=["POST"])
 def update_control_painel():
-    # task = read_string_from_arduino_continually.apply_async()
-    task = read_string_mock.delay()
-    return jsonify({}), 202, {'Location': url_for('taskstatus', task_id=task.id)}
+    task = read_string_from_arduino_continually.delay()
+    return jsonify({}), 202, {'Location': url_for('task_status', task_id=task.id)}
 
 
 @app.route("/inittask/<task_id>")
-def taskstatus(task_id):
-    task = read_string_mock.AsyncResult(task_id)
+def task_status(task_id):
+    task = read_string_from_arduino_continually.AsyncResult(task_id)
     if task.state == 'PENDING':
         response = {
             'state': task.state,
@@ -88,37 +87,32 @@ def taskstatus(task_id):
 
     return jsonify(response)
 
-# simple mock
+
 import random
 @celery.task(bind=True)
-def read_string_mock(self):
+def read_string_from_arduino_continually(self):
+    arduino_connection = ArduinoConnection()
+    list_from_arduino = arduino_connection.read_string_from_arduino()
+
     for i in range(120):
-        dtemp = random.randint(30, 80)
-        ptemp = random.randint(30, 70)
-        etemp = random.randint(20, 35)
-        speed = random.randint(40, 60)
-        press = random.randint(0, 100)
-        frict = random.randint(0, 60)
+        environment_tempeture = list_from_arduino[0]
+        disc_temperature = list_from_arduino[1]
+        pincers_temperature = list_from_arduino[2]
+        engine_speed = list_from_arduino[3]
+        disc_pressure = list_from_arduino[4]
+        frictional_force = list_from_arduino[5]
 
         self.update_state(state='PROGRESS',
-                          meta={'env_temp': etemp,
-                                'pin_temp': ptemp,
-                                'dsc_temp': dtemp,
-                                'speed': speed,
-                                'pressure': press,
-                                'friction': frict
+                          meta={'env_temp': environment_tempeture,
+                                'pin_temp': pincers_temperature,
+                                'dsc_temp': disc_temperature,
+                                'speed': engine_speed,
+                                'pressure': disc_pressure,
+                                'friction': frictional_force
                                 })
         time.sleep(0.5)
 
     return {'result': 51}
-
-
-@app.route("/start_test", methods=['POST'])
-@login_required
-def start_test():
-    velocity = request.form['velocity']
-    # print("The velocity is '" + velocity + "'")
-    return redirect('/home')
 
 
 @app.route("/stop_test")
@@ -126,33 +120,3 @@ def start_test():
 def stop_test():
     print "stopped test"
     return redirect('/home')
-
-
-@celery.task(bind=True)
-def read_string_from_arduino_continually(self):
-    self.environment_tempeture = 0.0
-    self.disc_temperature = 0.0
-    self.pincers_temperature = 0.0
-    self.engine_speed = 0.0
-    self.disc_pressure = 0.0
-    self.frictional_force = 0.0
-
-    self.arduino_connection = ArduinoConnection()
-    self.dictionary = self.arduino_connection.read_string_from_arduino()
-
-    i = 0
-    while i < 5:
-        self.update_state(state="FEEDBACK",
-                          meta={"environment_tempeture": self.environment_tempeture,
-                                "disc_temperature": self.disc_temperature,
-                                "pincers_temperature": self.pincers_temperature,
-                                "engine_speed": self.engine_speed,
-                                "disc_pressure": self.disc_pressure,
-                                "frictional_force": self.frictional_force})
-        time.sleep(0.5)
-    return {"environment_tempeture": 0.0,
-            "disc_temperature": 0.0,
-            "pincers_temperature": 0.0,
-            "engine_speed": 0.0,
-            "disc_pressure": 0.0,
-            "frictional_force": 0.0}
