@@ -88,13 +88,12 @@ def task_status(task_id):
     return jsonify(response)
 
 
-import random
 @celery.task(bind=True)
 def read_string_from_arduino_continually(self):
     arduino_connection = ArduinoConnection()
     list_from_arduino = arduino_connection.read_string_from_arduino()
 
-    for i in range(120):
+    while True:
         environment_tempeture = list_from_arduino[0]
         disc_temperature = list_from_arduino[1]
         pincers_temperature = list_from_arduino[2]

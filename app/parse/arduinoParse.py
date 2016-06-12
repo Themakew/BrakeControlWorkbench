@@ -9,4 +9,4 @@ class ArduinoConnection:
 
     def read_string_from_arduino(self):
         arduino_feedback_list = self.arduino_feedback.readline().split()
-        return self.convert_list_to_dictionary(arduino_feedback_list)
+        return arduino_feedback_list
