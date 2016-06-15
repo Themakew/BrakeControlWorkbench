@@ -6,6 +6,8 @@ from datetime import timedelta
 from flask import session, app
 from datetime import timedelta
 from flask import session, app
+from models import BrakeControl
+
 
 app = Flask(__name__)
 app.secret_key = "YqO29YjPwEWcV7w5UjzoamGL7+9UazD5MWcfM6ZgN/2lvQJtcjZHH2p+wSfZt\
@@ -20,6 +22,7 @@ login_manager = LoginManager(app)
 
 DB = DBHelper()
 
+bcontrol = BrakeControl()
 
 @app.before_request
 def make_session_permanent():

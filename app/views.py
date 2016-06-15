@@ -3,6 +3,7 @@ from application import app
 from application import celery
 from application import DB
 from application import login_manager
+from application import bcontrol
 from flask import redirect
 from flask import render_template
 from flask import request
@@ -13,6 +14,7 @@ from flask.ext.login import login_user
 from flask.ext.login import logout_user
 from models import User
 import time
+import random
 
 
 @login_manager.user_loader
@@ -81,15 +83,34 @@ def logout():
     return index() and redirect(url_for("index"))
 
 
+@app.route("/brake", methods=['POST'])
+def brake():
+    task = brake_task.delay()
+    return "Breaking engine response"
+
+
+@app.route('/stop_test', methods=['POST'])
+def stoptest():
+    bcontrol.stop_test()
+    return "Test Stopped by the server"
+
 @app.route("/update_control_painel", methods=["POST"])
 def update_control_painel():
-    task = read_string_from_arduino_continually.delay()
+    bcontrol.turn_on_engine()
+    bcontrol.velMax = request.form['velocityMax']
+    bcontrol.velMin = request.form['velocityMin']
+    bcontrol.cycles = request.form['cycles']
+
+    #task = read_string_from_arduino_continually.delay()
+    task = read_string_mock.delay()
+    bcontrol.taskID = task.id
     return jsonify({}), 202, {'Location': url_for('task_status', task_id=task.id)}
 
 
 @app.route("/inittask/<task_id>")
 def task_status(task_id):
-    task = read_string_from_arduino_continually.AsyncResult(task_id)
+    #task = read_string_from_arduino_continually.AsyncResult(task_id)
+    task = read_string_mock.AsyncResult(task_id)
     if task.state == 'PENDING':
         response = {
             'state': task.state,
@@ -114,6 +135,57 @@ def task_status(task_id):
         response = {'state': 'ERROR....'}
 
     return jsonify(response)
+
+
+@celery.task
+def brake_task():
+    task = read_string_mock.AsyncResult(bcontrol.taskID)
+
+    bcontrol.brake_engine()
+    bcontrol.currentCycle += 1
+    while True:
+        if bcontrol.currentCycle == bcontrol.cycles:
+            bcontrol.currentCycle = 0
+            while int(task.info.get('speed')) > 0:
+                continue
+
+            bcontrol.stop_test()
+            break
+        else:
+            if int(task.info.get('speed')) <= 40:
+                bcontrol.turn_on_engine()
+                break
+
+def vel_mock(vel):
+    if vel < bcontrol.velMax and bcontrol.motor:
+        vel += 5
+    elif vel > bcontrol.velMin and bcontrol.brake:
+        vel -= 10
+
+    return vel
+    
+@celery.task(bind=True)
+def read_string_mock(self):
+    speed = 0
+    for i in range(120):
+        dtemp = random.randint(30, 80)
+        ptemp = random.randint(30, 70)
+        etemp = random.randint(20, 35)
+        press = random.randint(0, 100)
+        frict = random.randint(0, 60)
+        speed = vel_mock(speed)
+
+        self.update_state(state='PROGRESS',
+                    meta={'env_temp': etemp,
+                          'pin_temp': ptemp,
+                          'dsc_temp': dtemp,
+                          'speed': speed,
+                          'pressure': press,
+                          'friction': frict
+                          })
+        time.sleep(0.5)
+
+    return {'result': 51}
 
 
 @celery.task(bind=True)

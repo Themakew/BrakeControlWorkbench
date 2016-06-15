@@ -1,6 +1,10 @@
 <script type="text/javascript">
     window.onload = function () {
 
+        $("#button-control").click(start_task);
+        $("#button-control-one").click(send_brake_requisition);
+        $("#button-control-two").click(stop_test_requisition);
+
         var vel_dps = []; // Datapoints
         var temp_disc_dps = []; // Datapoints
         var temp_grip_dps = []; // Datapoints
@@ -29,6 +33,7 @@
         var pressure = 0;
         var friction = 0;
         var updateInterval = 100;
+        var timeToNewRequest = 400;
         var dataLength = 500; // num of datapoints visible at any point
 
         var updateChart = function (count) {
@@ -36,13 +41,6 @@
             // count is number of times loop runs to generate random datapoints
 
             for (var j = 0; j < count; j++) {
-                //tempDisc = tempDisc + Math.round(5 + Math.random() *(-5-5));
-                //tempGrip = tempGrip + Math.round(5 + Math.random() *(-5-5));
-                //velDisc = velDisc + Math.round(5 + Math.random() *(-5-5));
-                // Don't need a chart
-                //tempEnv = tempEnv + Math.round(5 + Math.random() *(-5-5));
-                //pressure = pressure + Math.round(5 + Math.random() *(-5-5));
-                //friction = friction + Math.round(5 + Math.random() *(-5-5));
 
                 $("#temp_disc").html(tempDisc);
                 $("#temp_grip").html(tempGrip);
@@ -90,35 +88,68 @@
         setInterval(function(){ updateChart() }, updateInterval);
 
         function start_task() {
-                $.ajax({
-                    type: 'POST',
-                    url: '/update_control_painel',
-                    success: function(data, status, request) {
-                        status_url = request.getResponseHeader('Location');
-                        update_progress(status_url)
-                    },
-                    error: function() {
-                        alert('Unexpected error');
-                    }
-                });
-            }
+            console.log("Start task requisition");
+            $.ajax({
+                type: 'POST',
+                url: '/update_control_painel',
+                data: $('form').serialize(),
+                success: function(data, status, request) {
+                    status_url = request.getResponseHeader('Location');
+                    update_progress(status_url)
+                },
+                error: function() {
+                    alert('Unexpected error');
+                }
+            });
+        }
 
-            function update_progress(status_url) {
-                $.getJSON(status_url, function(data) {
-                    if (data['state'] == 'PROGRESS') {
-                        tempDisc = data['dsc_temp'];
-                        tempGrip = data['pin_temp'];
-                        velDisc = data['speed'];
-                        tempEnv = data['env_temp'];
-                        pressure = data['pressure'];
-                        friction = data['friction'];
-                    }
+        function update_progress(status_url) {
+            $.getJSON(status_url, function(data) {
+                if (data['state'] == 'PROGRESS') {
+                    tempDisc = data['dsc_temp'];
+                    tempGrip = data['pin_temp'];
+                    velDisc = data['speed'];
+                    tempEnv = data['env_temp'];
+                    pressure = data['pressure'];
+                    friction = data['friction'];
+
                     setTimeout( function() {
                         update_progress(status_url);
-                    }, 500);
-                });
-            }
+                    }, timeToNewRequest);
+                }
+            });
+        }
 
-            $("#button-control").click(start_task);
+
+        function send_brake_requisition() {
+            console.log("sending brake requisition");
+            $.ajax({
+                type: 'POST',
+                url: '/brake',
+                success: function(response) {
+                    console.log(response)
+                },
+                error: function(error) {
+                    console.log(error)
+                    alert('Unexpected error');
+                }
+            });
+        }
+
+        function stop_test_requisition() {
+            console.log("sending stop requisition");
+            $.ajax({
+                type: 'POST',
+                url: '/stop_test',
+                success: function(response) {
+                    console.log(response)
+                },
+                error: function(error) {
+                    console.log(error)
+                    alert('Unexpected error');
+                }
+            });
+        }
+
     }
 </script>
