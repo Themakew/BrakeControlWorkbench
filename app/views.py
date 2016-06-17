@@ -25,6 +25,7 @@ def load_user(user_id):
 @app.route("/")
 def index():
     save_file_with_text()
+    read_text_file()
     return render_template("index.html")
 
 
@@ -39,6 +40,18 @@ def save_file_with_text():
         for value in results:
             f.write(value)
             f.write("\n")
+
+
+def read_text_file():
+    results = []
+
+    with open('test.txt', 'r') as f:
+        data = f.readlines()
+        for line in data:
+            words = line.split()
+            results.append(words)
+
+    print results
 
 
 @app.route("/home")
