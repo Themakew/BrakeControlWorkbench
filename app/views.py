@@ -24,7 +24,19 @@ def load_user(user_id):
 
 @app.route("/")
 def index():
+    save_file_with_text()
     return render_template("index.html")
+
+
+def save_file_with_text():
+    print "teste salvar arquivo"
+    with open("test.txt", "w") as f:
+        print "entrou no with"
+        for x in [1, 2, 3]:
+            f.write("Valor x")
+            f.write(" ")
+            f.write("Valor y")
+            f.write("\n")
 
 
 @app.route("/home")
