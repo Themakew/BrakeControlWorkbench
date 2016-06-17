@@ -29,13 +29,15 @@ def index():
 
 
 def save_file_with_text():
-    print "teste salvar arquivo"
+    results = []
+
+    for x in [1, 2, 3]:
+        results.append("Valor x")
+        results.append("Valor y")
+
     with open("test.txt", "w") as f:
-        print "entrou no with"
-        for x in [1, 2, 3]:
-            f.write("Valor x")
-            f.write(" ")
-            f.write("Valor y")
+        for value in results:
+            f.write(value)
             f.write("\n")
 
 
