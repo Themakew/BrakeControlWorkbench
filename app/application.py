@@ -3,9 +3,8 @@ from flask import Flask
 from flask.ext.login import LoginManager
 from mockdbhelper import MockDBHelper as DBHelper
 from datetime import timedelta
-from flask import session, app
-from datetime import timedelta
-from flask import session, app
+from flask import app
+from flask import session
 from models import BrakeControl
 
 
@@ -23,6 +22,7 @@ login_manager = LoginManager(app)
 DB = DBHelper()
 
 bcontrol = BrakeControl()
+
 
 @app.before_request
 def make_session_permanent():

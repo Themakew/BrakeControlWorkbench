@@ -57,7 +57,7 @@ def logout():
 
 @app.route("/brake", methods=['POST'])
 def brake():
-    task = brake_task.delay()
+    brake_task.delay()
     return "Breaking engine response"
 
 
@@ -66,6 +66,7 @@ def stoptest():
     bcontrol.stop_test()
     return "Test Stopped by the server"
 
+
 @app.route("/update_control_painel", methods=["POST"])
 def update_control_painel():
     bcontrol.turn_on_engine()
@@ -73,7 +74,7 @@ def update_control_painel():
     bcontrol.velMin = request.form['velocityMin']
     bcontrol.cycles = request.form['cycles']
 
-    #task = read_string_from_arduino_continually.delay()
+    # task = read_string_from_arduino_continually.delay()
     task = read_string_mock.delay()
     bcontrol.taskID = task.id
     return jsonify({}), 202, {'Location': url_for('task_status', task_id=task.id)}
@@ -81,7 +82,7 @@ def update_control_painel():
 
 @app.route("/inittask/<task_id>")
 def task_status(task_id):
-    #task = read_string_from_arduino_continually.AsyncResult(task_id)
+    # task = read_string_from_arduino_continually.AsyncResult(task_id)
     task = read_string_mock.AsyncResult(task_id)
     if task.state == 'PENDING':
         response = {
@@ -128,6 +129,7 @@ def brake_task():
                 bcontrol.turn_on_engine()
                 break
 
+
 def vel_mock(vel):
     if vel < bcontrol.velMax and bcontrol.motor:
         vel += 5
@@ -135,7 +137,8 @@ def vel_mock(vel):
         vel -= 10
 
     return vel
-    
+
+
 @celery.task(bind=True)
 def read_string_mock(self):
     speed = 0
@@ -148,16 +151,16 @@ def read_string_mock(self):
         speed = vel_mock(speed)
 
         self.update_state(state='PROGRESS',
-                    meta={'env_temp': etemp,
-                          'pin_temp': ptemp,
-                          'dsc_temp': dtemp,
-                          'speed': speed,
-                          'pressure': press,
-                          'friction': frict
-                          })
+                          meta={'env_temp': etemp,
+                                'pin_temp': ptemp,
+                                'dsc_temp': dtemp,
+                                'speed': speed,
+                                'pressure': press,
+                                'friction': frict
+                                })
         time.sleep(0.5)
 
-    return {'result': 51}
+    return {'result': 0}
 
 
 @celery.task(bind=True)
@@ -183,7 +186,7 @@ def read_string_from_arduino_continually(self):
                                 })
         time.sleep(0.5)
 
-    return {'result': 51}
+    return {'result': 1}
 
 
 @app.route("/stop_test")
