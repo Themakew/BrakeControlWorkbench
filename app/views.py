@@ -33,13 +33,14 @@ def save_file_with_text():
     results = []
 
     for x in [1, 2, 3]:
-        results.append("Valor x")
-        results.append("Valor y")
+        results.append("Valorx")
+        results.append(" ")
+        results.append("Valory")
+        results.append("\n")
 
     with open("test.txt", "w") as f:
         for value in results:
             f.write(value)
-            f.write("\n")
 
 
 def read_text_file():

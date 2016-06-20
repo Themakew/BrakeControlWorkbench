@@ -1,6 +1,3 @@
-Valor x
-Valor y
-Valor x
-Valor y
-Valor x
-Valor y
+Valorx Valory
+Valorx Valory
+Valorx Valory
