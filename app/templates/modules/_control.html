@@ -1,35 +1,47 @@
 <div>
-    <br>
-    <form role="form">
-        <div class="form-group" id="vcontainer-item">
-            <label>Ciclos</label>
-            <select class="form-control" id="cycles" name="cycles">
-                <option>1</option>
-                <option>2</option>
-                <option>3</option>
-                <option>4</option>
-            </select>
-        </div>
-        <div class="form-group" id="vcontainer-item1">
-            <label>Escolha a velocidade máxima do teste:</label>
-            <select class="form-control" id="velocityMax" name="velocityMax">
-                <option>40 Km/h</option>
-                <option>60 Km/h</option>
-                <option>80 Km/h</option>
-            </select>
-        </div>
-        <div class="form-group" id="vcontainer-item2">
-            <label>Escolha a velocidade máxima do teste:</label>
-            <select class="form-control" id="velocityMin" name="velocityMin">
-                <option>0 Km/h</option>
-                <option>40 Km/h</option>
-                <option>60 Km/h</option>
-            </select>
-        </div>
-
-    </form>
-    <br>
-    <button class="btn btn-default" id="button-control">Iniciar Teste</button>
-    <button class="btn btn-warning" id="button-control-one">Acionar freio</button>
-    <button class="btn btn-danger" id="button-control-two">Parar teste</button>
+    <div class="container">
+        <h3>Central de Controle</h3>
+        <ul class="nav nav-pills nav-stacked">
+            <li >
+                <div class="form-group" id="vcontainer-item1">
+                    <label>Escolha a velocidade máxima do teste:</label>
+                    <select class="form-control" id="velocityMax" name="velocityMax">
+                        <option>40 Km/h</option>
+                        <option>60 Km/h</option>
+                        <option>80 Km/h</option>
+                    </select>
+                </div>
+            </li>
+            <li>
+                <div class="form-group" id="vcontainer-item2">
+                    <label>Escolha a velocidade máxima do teste:</label>
+                    <select class="form-control" id="velocityMin" name="velocityMin">
+                        <option>0 Km/h</option>
+                        <option>40 Km/h</option>
+                        <option>60 Km/h</option>
+                    </select>
+                </div>
+            </li>
+            <li>
+                <div class="form-group" id="vcontainer-item" style="margin-left: 15%;margin-right: 15%">
+                    <label>Ciclos</label>
+                    <select class="form-control" id="cycles" name="cycles">
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                    </select>
+                </div>
+            </li>
+            <li>
+                <button class="btn btn-success" id="button-control">Iniciar Teste</button>
+            </li>
+            <li>
+                <button class="btn btn-danger" id="button-control-one">Acionar freio</button>
+            </li>
+            <li>
+                <button class="btn btn-warning" id="button-control-two">Parar teste</button>
+            </li>
+        </ul>
+    </div>
 </div>
