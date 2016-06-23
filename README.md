@@ -1,7 +1,6 @@
 # BrakeControlWorkbench
 
-[![Build Status](https://travis-ci.org/Themakew/BrakeControlWorkbench.svg?branch=master)](https://travis-ci.org/Themakew/BrakeControlWorkbench)
-
+This system aims to get the feedback and control of the test stand for thermal simulation in real-time brake disc.
 
 # Installation
 
