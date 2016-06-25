@@ -16,6 +16,7 @@ from models import User
 import time
 import random
 
+logged_user = False
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -37,6 +38,7 @@ def control_painel():
 
 @app.route("/", methods=["POST"])
 def login():
+    global logged_user
     if request.method == "POST":
         email = request.form["email"]
         password = request.form["password"]
@@ -45,13 +47,23 @@ def login():
         if user_password and user_password == password:
             user = User(email)
             login_user(user)
-            return control_painel() and redirect(url_for("control_painel"))
+            if logged_user == False:
+                logged_user = True
+                print "&&&&&&&&&& logged_user = {} *******".format(logged_user)
+                return control_painel() and redirect(url_for("control_painel"))
+            else:
+                print "&&&&&&&&&&&&& Oooopssss &&&&&&&&&&&&&&&"
+                return "Sorry, there is someone else using the bench"
+
         return "User not logged!"
 
 
 @app.route("/logout")
 def logout():
+    global logged_user
     logout_user()
+    logged_user = False
+    print "&&&&&&&&&&&&&&&&&&& logged_user = {} *******".format(logged_user)
     return index() and redirect(url_for("index"))
 
 

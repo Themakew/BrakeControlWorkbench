@@ -1,4 +1,4 @@
-import RPi.GPIO as GPIO
+#import RPi.GPIO as GPIO
 from celery.task.control import revoke
 
 
@@ -21,9 +21,9 @@ class User:
 
 class BrakeControl(object):
     def __init__(self):
-        GPIO.setmode(GPIO.BOARD)
-        GPIO.setup(7, GPIO.OUT)
-        GPIO.setup(11, GPIO.OUT)
+        #GPIO.setmode(GPIO.BOARD)
+        #GPIO.setup(7, GPIO.OUT)
+        #GPIO.setup(11, GPIO.OUT)
         self.motor = False
         self.brake = False
         self.taskID = None
@@ -48,8 +48,9 @@ class BrakeControl(object):
         self.send_signal()
 
     def send_signal(self):
-        GPIO.output(7, self.motor)
-        GPIO.output(11, self.brake)
+        #GPIO.output(7, self.motor)
+        #GPIO.output(11, self.brake)
+        pass
 
     def stop_test(self):
         self.turn_off_all()
