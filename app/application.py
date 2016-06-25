@@ -28,4 +28,4 @@ bcontrol = BrakeControl()
 def make_session_permanent():
     bcontrol.stop_test()
     session.permanent = True
-    app.permanent_session_lifetime = timedelta(minutes=1)# 1 minute just for test
+    app.permanent_session_lifetime = timedelta(minutes=5)

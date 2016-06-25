@@ -61,18 +61,27 @@
 
 #center-control {
   margin-left: 7%;
-  margin-top: 6%;
+  margin-top: 0px;
+}
+
+#left-control {
+  margin-top: 2%;
+}
+
+#right-control {
+  margin-top: 2%;
 }
 
 .format-grafic-one {
   height: 240px;
   width: 150%;
-  margin-top: 5px
+  margin-top: 5px;
 }
 
 .format-grafic-two {
   height: 240px;
   width: 110%;
+  margin-top: 5px;
 }
 
 .format-grafic-three {
@@ -339,6 +348,24 @@ th {
   .table-bordered th,
   .table-bordered td {
     border: 1px solid #ddd !important;
+  }
+
+  .format-grafic-one {
+    height: 240px;
+    width: 150%;
+    margin-top: 5px;
+  }
+
+  .format-grafic-two {
+    height: 240px;
+    width: 110%;
+    margin-top: 5px;
+  }
+
+  .format-grafic-three {
+    height: 240px;
+    width: 113%;
+    margin-left: 5px;
   }
 }
 @font-face {
