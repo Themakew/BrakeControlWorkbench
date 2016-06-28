@@ -32,8 +32,8 @@
         var tempEnv = 0;
         var pressure = 0;
         var friction = 0;
-        var updateInterval = 100;
-        var timeToNewRequest = 400;
+        var updateInterval = 200;
+        var timeToNewRequest = 200;
         var dataLength = 500; // num of datapoints visible at any point
 
         var updateChart = function (count) {
@@ -105,7 +105,7 @@
 
         function update_progress(status_url) {
             $.getJSON(status_url, function(data) {
-                if (data['state'] == 'PROGRESS') {
+                if (data['state'] == 'PROGRESS' || data['state'] == 'PENDING') {
                     tempDisc = data['dsc_temp'];
                     tempGrip = data['pin_temp'];
                     velDisc = data['speed'];

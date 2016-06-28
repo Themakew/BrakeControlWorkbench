@@ -53,4 +53,4 @@ class BrakeControl(object):
 
     def stop_test(self):
         self.turn_off_all()
-        #revoke(self.taskID, terminate=True)
+
