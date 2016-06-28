@@ -15,6 +15,7 @@ from flask.ext.login import logout_user
 from models import User
 import time
 import random
+import memcache
 
 
 @login_manager.user_loader
@@ -85,12 +86,16 @@ def logout():
 
 @app.route("/brake", methods=['POST'])
 def brake():
-    task = brake_task.delay()
+    #task = brake_task.delay()
+    bcontrol.brake_engine()
     return "Breaking engine response"
 
 
 @app.route('/stop_test', methods=['POST'])
 def stoptest():
+    client = memcache.Client([('127.0.0.1', 11211)])
+    client.set("isTesting", False)
+    print "***************** isTesting was set to False **************"
     bcontrol.stop_test()
     return "Test Stopped by the server"
 
@@ -100,17 +105,19 @@ def update_control_painel():
     bcontrol.velMax = request.form['velocityMax']
     bcontrol.velMin = request.form['velocityMin']
     bcontrol.cycles = request.form['cycles']
+    client = memcache.Client([('127.0.0.1', 11211)])
+    client.set("isTesting", True)
+    print "***************** isTesting was set to True **************"
 
-    #task = read_string_from_arduino_continually.delay()
-    task = read_string_mock.delay()
-    bcontrol.taskID = task.id
+    task = read_string_from_arduino_continually.delay()
+    print "***************** Task should be running ***********************"
     return jsonify({}), 202, {'Location': url_for('task_status', task_id=task.id)}
+    #return "Accelerate"
 
 
 @app.route("/inittask/<task_id>")
 def task_status(task_id):
-    #task = read_string_from_arduino_continually.AsyncResult(task_id)
-    task = read_string_mock.AsyncResult(task_id)
+    task = read_string_from_arduino_continually.AsyncResult(task_id)
     if task.state == 'PENDING':
         response = {
             'state': task.state,
@@ -139,11 +146,11 @@ def task_status(task_id):
 
 @celery.task
 def brake_task():
-    task = read_string_mock.AsyncResult(bcontrol.taskID)
+    task = read_string_from_arduino_continually.AsyncResult(bcontrol.taskID)
 
     bcontrol.brake_engine()
     bcontrol.currentCycle += 1
-    while True:
+    while bcontrol.isTesting:
         if bcontrol.currentCycle == bcontrol.cycles:
             bcontrol.currentCycle = 0
             while int(task.info.get('speed')) > 0:
@@ -152,70 +159,44 @@ def brake_task():
             bcontrol.stop_test()
             break
         else:
-            if int(task.info.get('speed')) <= 40:
-                bcontrol.turn_on_engine()
-                break
+            #if int(task.info.get('speed')) <= 40:
+            #    bcontrol.turn_on_engine()
+            #    break
+            time.sleep(3)
+            bcontrol.turn_on_engine()
 
-def vel_mock(vel):
-    if vel < bcontrol.velMax and bcontrol.motor:
-        vel += 5
-    elif vel > bcontrol.velMin and bcontrol.brake:
-        vel -= 10
-
-    return vel
     
-@celery.task(bind=True)
-def read_string_mock(self):
-    speed = 0
-    for i in range(120):
-        dtemp = random.randint(30, 80)
-        ptemp = random.randint(30, 70)
-        etemp = random.randint(20, 35)
-        press = random.randint(0, 100)
-        frict = random.randint(0, 60)
-        speed = vel_mock(speed)
-
-        self.update_state(state='PROGRESS',
-                    meta={'env_temp': etemp,
-                          'pin_temp': ptemp,
-                          'dsc_temp': dtemp,
-                          'speed': speed,
-                          'pressure': press,
-                          'friction': frict
-                          })
-        time.sleep(0.5)
-
-    return {'result': 51}
-
-
 @celery.task(bind=True)
 def read_string_from_arduino_continually(self):
     arduino_connection = ArduinoConnection()
-    list_from_arduino = arduino_connection.read_string_from_arduino()
+    client = memcache.Client([('127.0.0.1', 11211)])
 
-    while True:
-        environment_tempeture = list_from_arduino[0]
-        disc_temperature = list_from_arduino[1]
+    print "************* New task read_string_from_arduino created *************"
+    while client.get("isTesting") == True:
+        list_from_arduino = arduino_connection.read_string_from_arduino()
+        #list_from_arduino = arduino_connection.read_string_mock()
+        print list_from_arduino
+        while len(list_from_arduino) < 6:
+            print "List size less than 6"
+            list_from_arduino = arduino_connection.read_string_from_arduino()
+
+        disc_temperature = list_from_arduino[0]
+        environment_temperature = list_from_arduino[1]
         pincers_temperature = list_from_arduino[2]
         engine_speed = list_from_arduino[3]
         disc_pressure = list_from_arduino[4]
         frictional_force = list_from_arduino[5]
 
         self.update_state(state='PROGRESS',
-                          meta={'env_temp': environment_tempeture,
+                          meta={'env_temp': environment_temperature,
                                 'pin_temp': pincers_temperature,
                                 'dsc_temp': disc_temperature,
                                 'speed': engine_speed,
                                 'pressure': disc_pressure,
                                 'friction': frictional_force
                                 })
-        time.sleep(0.5)
+        time.sleep(0.2)
 
+    print "************* Task read_string_from_arduino is DEAD *****************"
     return {'result': 51}
 
-
-@app.route("/stop_test")
-@login_required
-def stop_test():
-    print "stopped test"
-    return redirect('/home')
