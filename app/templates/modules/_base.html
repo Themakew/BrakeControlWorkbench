@@ -88,6 +88,7 @@
         setInterval(function(){ updateChart() }, updateInterval);
 
         function start_task() {
+            $('#button-control').attr('disabled','disabled');
             console.log("Start task requisition");
             $.ajax({
                 type: 'POST',
@@ -130,6 +131,7 @@
                 url: '/brake',
                 success: function(response) {
                     console.log(response)
+                    $('#button-control-two').removeAttr('disabled');
                 },
                 error: function(error) {
                     console.log(error)
@@ -139,6 +141,7 @@
         }
 
         function stop_test_requisition() {
+            $('#button-control').removeAttr('disabled');
             console.log("sending stop requisition");
             $.ajax({
                 type: 'POST',
@@ -151,6 +154,7 @@
                     alert('Unexpected error');
                 }
             });
+
             tempDisc = 0;
             tempGrip = 0;
             velDisc = 0;
@@ -158,6 +162,5 @@
             pressure = 0;
             friction = 0;
        }
-
     }
 </script>

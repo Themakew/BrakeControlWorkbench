@@ -3,7 +3,6 @@ from app.models import User
 
 
 class TestModels(unittest.TestCase):
-
     def test_get_id_when_email_is_informed(self):
         self.user = User("test@test.com")
         self.assertEqual(self.user.get_id(), "test@test.com")

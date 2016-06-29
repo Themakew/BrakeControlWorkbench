@@ -3,9 +3,8 @@ from flask import Flask
 from flask.ext.login import LoginManager
 from mockdbhelper import MockDBHelper as DBHelper
 from datetime import timedelta
-from flask import session, app
-from datetime import timedelta
-from flask import session, app
+from flask import app
+from flask import session
 from models import BrakeControl
 
 
@@ -24,7 +23,9 @@ DB = DBHelper()
 
 bcontrol = BrakeControl()
 
+
 @app.before_request
 def make_session_permanent():
+    bcontrol.stop_test()
     session.permanent = True
     app.permanent_session_lifetime = timedelta(minutes=5)

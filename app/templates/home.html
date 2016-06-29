@@ -12,14 +12,8 @@
 {% block navbar_content %}
 
 <div class="navbar-form navbar-right" method="post" action=''>
-    <div class="dropdown">
-      <button class="dropbtn">Menu &darr;</button>
-      <div class="dropdown-content">
-        <a href="#">Save &rarr;</a>
-        <a href="#">Historic &rarr;</a>
-      </div>
-    </div>
-    <a class="btn btn-success" href="/logout">Logout</a>
+  <a class="btn btn-info" href="">Salvar</a>
+  <a class="btn btn-success" href="/logout">Sair</a>
 </div>
 
 {% endblock %}
@@ -29,37 +23,37 @@
 <div class="jumbotron">
     <div class="container">
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-4" id="left-control">
                 {% include "modules/_jwplayer.html" %}
             </div>
             <div class="col-md-3" id="center-control">
                 {% include "modules/_control.html" %}
             </div>
-            <div class="col-md-3">
+            <div class="col-md-3" id="right-control">
                 <div id="velocity_time" class="format-grafic-one">
                 </div>
             </div>
         </div>
         <br>
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-4" id="left-control">
                 {% include "modules/_table.html" %}
             </div>
             <div class="col-md-3" id="center-control">
                 {# Nothing in this column #}
             </div>
-            <div class="col-md-4">
+            <div class="col-md-4" id="right-control">
                 <div id="temperature_time" class="format-grafic-two">
                 </div>
             </div>
         </div>
         <br>
         <div class"row">
-            <div class="col-md-4">
+            <div class="col-md-4" id="left-control">
             </div>
             <div class="col-md-3" id="center-control">
             </div>
-            <div class="col-md-4">
+            <div class="col-md-4" id="right-control">
                 <div id="temperature_grip" class="format-grafic-three">
                 </div>
             </div>

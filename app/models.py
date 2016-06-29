@@ -1,5 +1,4 @@
 import RPi.GPIO as GPIO
-from celery.task.control import revoke
 import time
 
 

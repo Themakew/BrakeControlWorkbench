@@ -14,8 +14,9 @@ from flask.ext.login import login_user
 from flask.ext.login import logout_user
 from models import User
 import time
-import random
 import memcache
+
+logged_user = False
 
 
 @login_manager.user_loader
@@ -29,6 +30,7 @@ def load_user(user_id):
 def index():
     return render_template("index.html")
 
+
 @app.route("/home")
 @login_required
 def control_painel():
@@ -37,6 +39,7 @@ def control_painel():
 
 @app.route("/", methods=["POST"])
 def login():
+    global logged_user
     if request.method == "POST":
         email = request.form["email"]
         password = request.form["password"]
@@ -45,23 +48,32 @@ def login():
         if user_password and user_password == password:
             user = User(email)
             login_user(user)
-            return control_painel() and redirect(url_for("control_painel"))
+            if logged_user is False:
+                logged_user = True
+                print "&&&&&&&&&& logged_user = {} *******".format(logged_user)
+                return control_painel() and redirect(url_for("control_painel"))
+            else:
+                print "&&&&&&&&&&&&& Oooopssss &&&&&&&&&&&&&&&"
+                return "Sorry, there is someone else using the bench"
+
         return "User not logged!"
 
 
 @app.route("/logout")
 def logout():
+    global logged_user
     logout_user()
+    logged_user = False
+    print "&&&&&&&&&&&&&&&&&&& logged_user = {} *******".format(logged_user)
     return index() and redirect(url_for("index"))
 
 
 @app.route("/brake", methods=['POST'])
 def brake():
     client = memcache.Client([('127.0.0.1', 11211)])
-    if client.get('isBreaking') == True:
+    if client.get('isBreaking') is True:
         return 'Already breaking'
-
-    task = brake_task.delay()
+    # task = brake_task.delay()
     return "Breaking engine response"
 
 
@@ -72,6 +84,7 @@ def stoptest():
     print "***************** isTesting was set to False **************"
     bcontrol.stop_test()
     return "Test Stopped by the server"
+
 
 @app.route("/update_control_painel", methods=["POST"])
 def update_control_painel():
@@ -92,7 +105,7 @@ def update_control_painel():
     task = read_string_from_arduino_continually.delay()
     print "***************** Task should be running ***********************"
     return jsonify({}), 202, {'Location': url_for('task_status', task_id=task.id)}
-    #return "Accelerate"
+    # return "Accelerate"
 
 
 @app.route("/inittask/<task_id>")
@@ -131,7 +144,6 @@ def brake_task():
     bcontrol.brake_engine()
     print "cycles = {}".format(client.get('cycles'))
     print "current_cycle = {}".format(client.get('current_cycle'))
-
     client.incr('current_cycle')
     if client.get('current_cycle') < client.get('cycles'):
         time.sleep(3)
@@ -139,7 +151,7 @@ def brake_task():
     client.set('isBreaking', False)
     print "******** Break task ending *********"
 
-    
+
 @celery.task(bind=True)
 def read_string_from_arduino_continually(self):
     arduino_connection = ArduinoConnection()
@@ -148,10 +160,10 @@ def read_string_from_arduino_continually(self):
     timetest = 0.0
 
     print "************* New task read_string_from_arduino created *************"
-    while client.get("isTesting") == True:
+    while client.get("isTesting") is True:
         list_from_arduino = arduino_connection.read_string_from_arduino()
 
-        #list_from_arduino = arduino_connection.read_string_mock()
+        # list_from_arduino = arduino_connection.read_string_mock()
         print list_from_arduino
         while len(list_from_arduino) < 6:
             print "List size less than 6"
@@ -191,4 +203,3 @@ def read_string_from_arduino_continually(self):
 
     print "************* Task read_string_from_arduino is DEAD *****************"
     return {'result': 51}
-
