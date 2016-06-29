@@ -29,33 +29,6 @@ def load_user(user_id):
 def index():
     return render_template("index.html")
 
-
-def save_file_with_text():
-    results = []
-
-    for x in [1, 2, 3]:
-        results.append("Valorx")
-        results.append(" ")
-        results.append("Valory")
-        results.append("\n")
-
-    with open("test.txt", "w") as f:
-        for value in results:
-            f.write(value)
-
-
-def read_text_file():
-    results = []
-
-    with open('test.txt', 'r') as f:
-        data = f.readlines()
-        for line in data:
-            words = line.split()
-            results.append(words)
-
-    print results
-
-
 @app.route("/home")
 @login_required
 def control_painel():
@@ -84,8 +57,11 @@ def logout():
 
 @app.route("/brake", methods=['POST'])
 def brake():
-    #task = brake_task.delay()
-    bcontrol.brake_engine()
+    client = memcache.Client([('127.0.0.1', 11211)])
+    if client.get('isBreaking'):
+        return 'Already breaking'
+
+    task = brake_task.delay()
     return "Breaking engine response"
 
 
@@ -99,12 +75,15 @@ def stoptest():
 
 @app.route("/update_control_painel", methods=["POST"])
 def update_control_painel():
+    client = memcache.Client([('127.0.0.1', 11211)])
+    if client.get('isTesting'):
+        return 'There is a test running right now'
+
     bcontrol.turn_on_engine()
     velMax = request.form['velocityMax']
     bcontrol.set_velMax(velMax)
     bcontrol.velMin = request.form['velocityMin']
     bcontrol.cycles = request.form['cycles']
-    client = memcache.Client([('127.0.0.1', 11211)])
     client.set("isTesting", True)
     print "***************** isTesting was set to True **************"
 
@@ -145,24 +124,13 @@ def task_status(task_id):
 
 @celery.task
 def brake_task():
-    task = read_string_from_arduino_continually.AsyncResult(bcontrol.taskID)
-
+    client = memcache.Client([('127.0.0.1', 11211)])
     bcontrol.brake_engine()
     bcontrol.currentCycle += 1
-    while bcontrol.isTesting:
-        if bcontrol.currentCycle == bcontrol.cycles:
-            bcontrol.currentCycle = 0
-            while int(task.info.get('speed')) > 0:
-                continue
-
-            bcontrol.stop_test()
-            break
-        else:
-            #if int(task.info.get('speed')) <= 40:
-            #    bcontrol.turn_on_engine()
-            #    break
-            time.sleep(3)
-            bcontrol.turn_on_engine()
+    if bcontrol.currentCycle < bcontrol.cycles:
+        time.sleep(3)
+        bcontrol.turn_on_engine()
+    client.set('isBreaking', False)
 
     
 @celery.task(bind=True)
