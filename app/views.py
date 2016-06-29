@@ -58,7 +58,7 @@ def logout():
 @app.route("/brake", methods=['POST'])
 def brake():
     client = memcache.Client([('127.0.0.1', 11211)])
-    if client.get('isBreaking'):
+    if client.get('isBreaking') == True:
         return 'Already breaking'
 
     task = brake_task.delay()
@@ -84,6 +84,9 @@ def update_control_painel():
     bcontrol.set_velMax(velMax)
     bcontrol.velMin = request.form['velocityMin']
     bcontrol.cycles = request.form['cycles']
+    client.set('cycles', int(bcontrol.cycles))
+    client.set('current_cycle', 0)
+    print "***************** {} ******************".format(bcontrol.cycles)
     client.set("isTesting", True)
     print "***************** isTesting was set to True **************"
 
@@ -124,13 +127,18 @@ def task_status(task_id):
 
 @celery.task
 def brake_task():
+    print "******* Break task initialized *******"
     client = memcache.Client([('127.0.0.1', 11211)])
     bcontrol.brake_engine()
-    bcontrol.currentCycle += 1
-    if bcontrol.currentCycle < bcontrol.cycles:
+    print "cycles = {}".format(client.get('cycles'))
+    print "current_cycle = {}".format(client.get('current_cycle'))
+
+    client.incr('current_cycle')
+    if client.get('current_cycle') < client.get('cycles'):
         time.sleep(3)
         bcontrol.turn_on_engine()
     client.set('isBreaking', False)
+    print "******** Break task ending *********"
 
     
 @celery.task(bind=True)
