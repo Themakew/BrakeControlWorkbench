@@ -27,8 +27,6 @@ def load_user(user_id):
 
 @app.route("/")
 def index():
-    save_file_with_text()
-    read_text_file()
     return render_template("index.html")
 
 
@@ -171,15 +169,19 @@ def brake_task():
 def read_string_from_arduino_continually(self):
     arduino_connection = ArduinoConnection()
     client = memcache.Client([('127.0.0.1', 11211)])
+    listaDados = []
 
     print "************* New task read_string_from_arduino created *************"
     while client.get("isTesting") == True:
         list_from_arduino = arduino_connection.read_string_from_arduino()
+
         #list_from_arduino = arduino_connection.read_string_mock()
         print list_from_arduino
         while len(list_from_arduino) < 6:
             print "List size less than 6"
             list_from_arduino = arduino_connection.read_string_from_arduino()
+
+        listaDados.append(list_from_arduino)
 
         disc_temperature = list_from_arduino[0]
         environment_temperature = list_from_arduino[1]
@@ -197,6 +199,10 @@ def read_string_from_arduino_continually(self):
                                 'friction': frictional_force
                                 })
         time.sleep(0.2)
+
+    with open("test.txt", "w") as f:
+        for value in listaDados:
+            f.write(value)
 
     print "************* Task read_string_from_arduino is DEAD *****************"
     return {'result': 51}
