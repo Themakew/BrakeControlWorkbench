@@ -82,7 +82,6 @@ def update_control_painel():
     bcontrol.turn_on_engine()
     velMax = request.form['velocityMax']
     bcontrol.set_velMax(velMax)
-    bcontrol.velMin = request.form['velocityMin']
     bcontrol.cycles = request.form['cycles']
     client.set('cycles', int(bcontrol.cycles))
     client.set('current_cycle', 0)
@@ -161,9 +160,9 @@ def read_string_from_arduino_continually(self):
         disc_temperature = list_from_arduino[0]
         environment_temperature = list_from_arduino[1]
         pincers_temperature = list_from_arduino[2]
-        engine_speed = list_from_arduino[3]
+        engine_speed = list_from_arduino[3] * 0.10472
         disc_pressure = list_from_arduino[4]
-        frictional_force = list_from_arduino[5]
+        frictional_force = list_from_arduino[5] * 10
 
         string = '{} {} {} {} {} {} {}\n'.format(timetest,
                                                  disc_temperature,

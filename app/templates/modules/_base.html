@@ -109,9 +109,11 @@
                     tempDisc = data['dsc_temp'];
                     tempGrip = data['pin_temp'];
                     velDisc = data['speed'];
+                    velDisc.toFixed(2);
                     tempEnv = data['env_temp'];
                     pressure = data['pressure'];
                     friction = data['friction'];
+                    friction.toFixed(2);
 
                     setTimeout( function() {
                         update_progress(status_url);

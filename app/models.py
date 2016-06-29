@@ -35,7 +35,6 @@ class BrakeControl(object):
         self.cycles = 0
         self.currentCycle = 0
         self.velMax = 0
-        self.velMin = 0
 
     def turn_on_engine(self):
         self.motor = True
@@ -70,11 +69,11 @@ class BrakeControl(object):
 
     def setpins(self):
         if self.velMax == "80 Km/h":
-            self.sendPinSignal(True, True, True, True)
+            self.sendPinSignal(True, True, False, True)
         elif self.velMax == "60 Km/h":
-            self.sendPinSignal(True, True, False, False)
-        elif self.velMax == "40 Km/h":
             self.sendPinSignal(True, False, False, False)
+        elif self.velMax == "40 Km/h":
+            self.sendPinSignal(False, True, True, True)
 
     def sendPinSignal(self, bit1, bit2, bit3, bit4):
         GPIO.output(29, bit1)
