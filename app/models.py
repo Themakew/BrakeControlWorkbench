@@ -1,5 +1,6 @@
 import RPi.GPIO as GPIO
 from celery.task.control import revoke
+import time
 
 
 class User:
@@ -24,6 +25,10 @@ class BrakeControl(object):
         GPIO.setmode(GPIO.BOARD)
         GPIO.setup(7, GPIO.OUT)
         GPIO.setup(11, GPIO.OUT)
+        GPIO.setup(29, GPIO.OUT)
+        GPIO.setup(31, GPIO.OUT)
+        GPIO.setup(33, GPIO.OUT)
+        GPIO.setup(35, GPIO.OUT)
         self.motor = False
         self.brake = False
         self.taskID = None
@@ -35,22 +40,44 @@ class BrakeControl(object):
     def turn_on_engine(self):
         self.motor = True
         self.brake = False
-        self.send_signal()
+        GPIO.output(11, self.brake)
+        time.sleep(0.5)
+        GPIO.output(7, self.motor)
 
     def brake_engine(self):
         self.motor = False
         self.brake = True
-        self.send_signal()
+        GPIO.output(7, self.motor)
+        time.sleep(0.5)
+        GPIO.output(11, self.brake)
 
     def turn_off_all(self):
         self.motor = False
         self.brake = False
-        self.send_signal()
-
-    def send_signal(self):
-        GPIO.output(7, self.motor)
         GPIO.output(11, self.brake)
+        GPIO.output(7, self.motor)
+        GPIO.output(29, False)
+        GPIO.output(31, False)
+        GPIO.output(33, False)
+        GPIO.output(35, False)
 
     def stop_test(self):
         self.turn_off_all()
 
+    def set_velMax(self, vel):
+        self.velMax = vel
+        self.setpins()
+
+    def setpins(self):
+        if self.velMax == "80 Km/h":
+            self.sendPinSignal(True, True, True, True)
+        elif self.velMax == "60 Km/h":
+            self.sendPinSignal(True, True, False, False)
+        elif self.velMax == "40 Km/h":
+            self.sendPinSignal(True, False, False, False)
+
+    def sendPinSignal(self, bit1, bit2, bit3, bit4):
+        GPIO.output(29, bit1)
+        GPIO.output(31, bit2)
+        GPIO.output(33, bit3)
+        GPIO.output(35, bit4)
