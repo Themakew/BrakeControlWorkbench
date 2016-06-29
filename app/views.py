@@ -170,6 +170,7 @@ def read_string_from_arduino_continually(self):
     arduino_connection = ArduinoConnection()
     client = memcache.Client([('127.0.0.1', 11211)])
     listaDados = []
+    timetest = 0.0
 
     print "************* New task read_string_from_arduino created *************"
     while client.get("isTesting") == True:
@@ -181,8 +182,6 @@ def read_string_from_arduino_continually(self):
             print "List size less than 6"
             list_from_arduino = arduino_connection.read_string_from_arduino()
 
-        listaDados.append(list_from_arduino)
-
         disc_temperature = list_from_arduino[0]
         environment_temperature = list_from_arduino[1]
         pincers_temperature = list_from_arduino[2]
@@ -190,6 +189,15 @@ def read_string_from_arduino_continually(self):
         disc_pressure = list_from_arduino[4]
         frictional_force = list_from_arduino[5]
 
+        string = '{} {} {} {} {} {} {}\n'.format(timetest,
+                                                 disc_temperature,
+                                                 environment_temperature,
+                                                 pincers_temperature,
+                                                 engine_speed,
+                                                 disc_pressure,
+                                                 frictional_force)
+        listaDados.append(string)
+        timetest = timetest + 0.2
         self.update_state(state='PROGRESS',
                           meta={'env_temp': environment_temperature,
                                 'pin_temp': pincers_temperature,
@@ -200,9 +208,11 @@ def read_string_from_arduino_continually(self):
                                 })
         time.sleep(0.2)
 
-    with open("test.txt", "w") as f:
-        for value in listaDados:
-            f.write(value)
+    namefile = time.strftime('%c')
+    namefile = 'results/{}.txt'.format(namefile)
+    with open(namefile, "w") as f:
+        for values in listaDados:
+            f.write(values)
 
     print "************* Task read_string_from_arduino is DEAD *****************"
     return {'result': 51}
