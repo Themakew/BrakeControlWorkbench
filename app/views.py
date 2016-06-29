@@ -74,7 +74,8 @@ def stoptest():
 @app.route("/update_control_painel", methods=["POST"])
 def update_control_painel():
     bcontrol.turn_on_engine()
-    bcontrol.velMax = request.form['velocityMax']
+    velMax = request.form['velocityMax']
+    bcontrol.set_velMax(velMax)
     bcontrol.velMin = request.form['velocityMin']
     bcontrol.cycles = request.form['cycles']
     client = memcache.Client([('127.0.0.1', 11211)])
